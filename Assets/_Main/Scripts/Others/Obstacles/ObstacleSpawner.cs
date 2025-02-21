@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Shubham.Tyagi
 {
@@ -13,6 +15,9 @@ namespace Shubham.Tyagi
 
         private List<GameObject> obstacleList = new List<GameObject>();
         private List<float> lanePositions;
+        private Platform platform;
+
+        private void Awake() => platform = GetComponentInParent<Platform>();
 
         private void Start() => SpawnObstacles();
 
@@ -25,7 +30,7 @@ namespace Shubham.Tyagi
             foreach (float _zPos in GenerateRandomIncreasingPositions(_coinCount))
             {
                 float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];
-                Vector3 _spawnPos = new Vector3(_laneX, height, transform.position.z + _zPos);
+                Vector3 _spawnPos = new Vector3(_laneX + platform.offsetX, height, transform.position.z + _zPos);
                 obstacleList.Add(Instantiate(prefab, _spawnPos, Quaternion.identity, parent));
             }
         }

@@ -4,66 +4,36 @@ namespace Shubham.Tyagi
 {
     public class PlayerController : Player
     {
-        // [SerializeField] private float forwardSpeed = 5f;
-        // [SerializeField] private float laneChangeSpeed = 5f;
-        // [SerializeField] private float jumpForce = 5f;
-        // [SerializeField] private float gravity = 2f;
-        // [SerializeField] private int currentLane = 0;
-        // [SerializeField] private bool isGrounded;
-        // [SerializeField] private Vector3 startingPosition = Vector3.zero;
-
-        [SerializeField] private float minDistanceToSendData = 0.1f;
-
-        // private Rigidbody rigidbody;
+        public float offsetX;
         private Vector3 lastSentPosition;
         private int _score;
 
-        void Start()
+        protected override void OnGameStateChanged(GameState _state)
         {
-            rigidbody = GetComponent<Rigidbody>();
-            transform.position = lastSentPosition = startingPosition;
-        }
-
-        public override void OnGameStateChanged(GameState _state)
-        {
+            base.OnGameStateChanged(_state);
             if (_state == GameState.Ended)
             {
-                transform.position = lastSentPosition = startingPosition;
-                currentLane = 0;
+                transform.position = startingPosition;
+                currentLane = _score = 0;
             }
         }
 
-
-        void FixedUpdate()
+        protected override void FixedUpdate()
         {
+            base.FixedUpdate();
             if (GameManager.Instance.GameState != GameState.Running) return;
 
-            // MoveForward();
             MoveLane();
-            ApplyGravity();
-            // SendDataToRemotePlayer();
+            SendDataToRemotePlayer();
         }
 
-        void MoveForward() => rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, rigidbody.linearVelocity.y, forwardSpeed);
-
-        void MoveLane()
+        private void MoveLane()
         {
-            Vector3 targetPosition = new Vector3(currentLane * PlatformManager.Instance.LaneWidth, transform.position.y, transform.position.z);
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * laneChangeSpeed);
+            Vector3 _targetPos = new Vector3(offsetX + (currentLane * PlatformManager.Instance.LaneWidth), transform.position.y, transform.position.z);
+            Vector3 _finalPos = Vector3.Lerp(transform.position, _targetPos, Time.fixedDeltaTime * laneChangeSpeed);
+            rigidbody.MovePosition(_finalPos);
         }
 
-        public void Jump()
-        {
-            if (!isGrounded) return;
-            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, jumpForce, rigidbody.linearVelocity.z);
-            isGrounded = false;
-        }
-
-        void ApplyGravity()
-        {
-            if (isGrounded) return;
-            rigidbody.linearVelocity -= Vector3.down * (gravity * Physics.gravity.y * Time.deltaTime);
-        }
 
         public void MoveLeft()
         {
@@ -77,22 +47,13 @@ namespace Shubham.Tyagi
             currentLane++;
         }
 
-
-        void SendDataToRemotePlayer()
+        private void SendDataToRemotePlayer()
         {
-            if (Vector3.Distance(transform.position, lastSentPosition) < minDistanceToSendData)
-                return;
+            if (GameManager.Instance.gameMode == GameMode.SinglePlayer) return;
+            if (Vector3.Distance(rigidbody.position, lastSentPosition) < RemotePlayerManager.Instance.minDistanceToSendData) return;
 
-            lastSentPosition = transform.position;
-            RemotePlayerManager.Instance.SendPlayerData(transform.position, !isGrounded);
-        }
-
-        void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.CompareTag("Ground"))
-            {
-                isGrounded = true;
-            }
+            lastSentPosition = rigidbody.position;
+            RemotePlayerManager.Instance.SendData(rigidbody.position, !isGrounded);
         }
 
 

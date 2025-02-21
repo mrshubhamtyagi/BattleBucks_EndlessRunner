@@ -17,6 +17,16 @@ namespace Shubham.Tyagi
             Instance = this;
         }
 
+        private void Start()
+        {
+            PlayerSpawner.Instance.SpawnLocalPlayer();
+            PlatformManager.Instance.SpawnInitialPlatforms();
+            if (gameMode == GameMode.Multiplayer)
+            {
+                PlayerSpawner.Instance.SpawnRemotePlayer();
+            }
+        }
+
         public void SetGameState(GameState _state)
         {
             GameState = _state;

@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
 namespace Shubham.Tyagi
 {
     public class Platform : MonoBehaviour
     {
+        public float offsetX = 10;
         [SerializeField] private float speed = 10;
         private int platformLength => 100;
 
@@ -16,6 +18,10 @@ namespace Shubham.Tyagi
             obstacleSpawner = GetComponentInChildren<ObstacleSpawner>();
         }
 
+        private void Start()
+        {
+            
+        }
 
         private void Update()
         {

@@ -7,7 +7,7 @@ namespace Shubham.Tyagi
     {
         [SerializeField] private GameObject homeScreen, gameScreen, gameOverObj;
         [SerializeField] private TMPro.TextMeshProUGUI scoreText, finalScoreText;
-        [SerializeField] private GameObject screenDivider;
+        [SerializeField] private GameObject screenDivider, playerTags;
 
         public static UIManager Instance { get; private set; }
 
@@ -17,7 +17,11 @@ namespace Shubham.Tyagi
             Instance = this;
         }
 
-        private void Start() => screenDivider.SetActive(GameManager.Instance.gameMode == GameMode.Multiplayer);
+        private void Start()
+        {
+            screenDivider.SetActive(GameManager.Instance.gameMode == GameMode.Multiplayer);
+            playerTags.SetActive(GameManager.Instance.gameMode == GameMode.Multiplayer);
+        }
 
         private void OnEnable() => GameManager.OnGameStateChanged += OnGameStateChanged;
         private void OnDisable() => GameManager.OnGameStateChanged -= OnGameStateChanged;
@@ -40,9 +44,9 @@ namespace Shubham.Tyagi
                     return;
 
                 case GameState.Ended:
-                    UpdateScore(0);
                     finalScoreText.text = scoreText.text;
                     gameOverObj.SetActive(true);
+                    UpdateScore(0);
                     return;
             }
         }

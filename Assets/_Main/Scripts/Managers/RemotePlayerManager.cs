@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Shubham.Tyagi
@@ -6,6 +5,7 @@ namespace Shubham.Tyagi
     public class RemotePlayerManager : MonoBehaviour
     {
         [SerializeField] private RemotePlayerController remotePlayer;
+        [field: SerializeField] public float minDistanceToSendData = 0.1f;
 
         private Vector3 lastSentPosition;
         private bool lastJumpState;
@@ -18,15 +18,17 @@ namespace Shubham.Tyagi
             Instance = this;
         }
 
+        public void SetRemotePlayer(RemotePlayerController _player) => remotePlayer = _player;
 
-        public void SendPlayerData(Vector3 position, bool jumped)
+
+        public void SendData(Vector3 position, bool jumped)
         {
-            if (Vector3.Distance(position, lastSentPosition) > 0.1f || jumped != lastJumpState)
-            {
-                lastSentPosition = position;
-                lastJumpState = jumped;
-                remotePlayer.ReceiveMovementData(position, jumped);
-            }
+            if (remotePlayer == null) return;
+            if (Vector3.Distance(position, lastSentPosition) < minDistanceToSendData && jumped == lastJumpState) return;
+
+            lastSentPosition = position;
+            lastJumpState = jumped;
+            remotePlayer.ReceiveData(position, jumped);
         }
     }
 }

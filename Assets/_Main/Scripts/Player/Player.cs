@@ -15,7 +15,7 @@ namespace Shubham.Tyagi
 
         protected Rigidbody rigidbody;
 
-        private void Start()
+        protected virtual void Start()
         {
             rigidbody = GetComponent<Rigidbody>();
             transform.position = startingPosition;
@@ -24,8 +24,37 @@ namespace Shubham.Tyagi
         private void OnEnable() => GameManager.OnGameStateChanged += OnGameStateChanged;
         private void OnDisable() => GameManager.OnGameStateChanged -= OnGameStateChanged;
 
-        public virtual void OnGameStateChanged(GameState _state)
+        protected virtual void OnGameStateChanged(GameState _state)
         {
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (GameManager.Instance.GameState != GameState.Running) return;
+
+            // MoveForward();
+            ApplyGravity();
+        }
+
+        private void MoveForward() => rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, rigidbody.linearVelocity.y, forwardSpeed);
+
+        public void Jump()
+        {
+            if (!isGrounded) return;
+            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, jumpForce, rigidbody.linearVelocity.z);
+            isGrounded = false;
+        }
+
+        private void ApplyGravity()
+        {
+            if (isGrounded) return;
+            rigidbody.linearVelocity -= Vector3.down * (gravity * Physics.gravity.y * Time.fixedDeltaTime);
+        }
+
+        protected virtual void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.CompareTag("Ground"))
+                isGrounded = true;
         }
     }
 }

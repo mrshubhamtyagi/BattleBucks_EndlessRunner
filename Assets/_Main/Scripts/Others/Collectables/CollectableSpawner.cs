@@ -14,7 +14,9 @@ namespace Shubham.Tyagi
 
         private List<GameObject> collectableList = new List<GameObject>();
         private List<float> lanePositions;
+        private Platform platform;
 
+        private void Awake() => platform = GetComponentInParent<Platform>();
         private void Start() => SpawnCollectables();
 
         public void SpawnCollectables()
@@ -34,7 +36,7 @@ namespace Shubham.Tyagi
             foreach (float _zPos in GenerateRandomIncreasingPositions(_coinCount))
             {
                 float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];
-                Vector3 _spawnPos = new Vector3(_laneX, height, transform.position.z + _zPos);
+                Vector3 _spawnPos = new Vector3(_laneX + platform.offsetX, height, transform.position.z + _zPos);
                 collectableList.Add(Instantiate(prefab, _spawnPos, Quaternion.identity, parent));
             }
         }

@@ -3,74 +3,44 @@ using UnityEngine.Serialization;
 
 namespace Shubham.Tyagi
 {
-    public class RemotePlayerController : MonoBehaviour
+    public class RemotePlayerController : Player
     {
-        [SerializeField] private float lerpSpeed = 5f;
-        [SerializeField] private float jumpForce = 5f;
-        [SerializeField] private float gravity = 2f;
-        [SerializeField] private bool isGrounded;
-        [SerializeField] private Vector3 startingPosition = Vector3.zero;
+        public float offsetX;
+        [SerializeField] private Vector3 targetPosition;
 
-        private Rigidbody rigidbody;
-        private Vector3 targetPosition;
-        private float verticalVelocity = 0f;
-
-        void Start()
+        protected override void Start()
         {
-            rigidbody = GetComponent<Rigidbody>();
-            targetPosition = transform.position = startingPosition;
+            base.Start();
+            targetPosition = startingPosition;
         }
 
-        void FixedUpdate()
+        protected override void OnGameStateChanged(GameState _state)
         {
+            base.OnGameStateChanged(_state);
+            if (_state == GameState.Ended)
+                transform.position = targetPosition = startingPosition;
+        }
+
+        protected override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            if (GameManager.Instance.GameState != GameState.Running) return;
+
             MovePlayer();
-            ApplyGravity();
         }
 
-        public void ReceiveMovementData(Vector3 _position, bool _hasJumped)
+        public void ReceiveData(Vector3 _position, bool _hasJumped)
         {
-            targetPosition = new Vector3(_position.x, transform.position.y, _position.z);
+            targetPosition = new Vector3(_position.x + offsetX, transform.position.y, _position.z);
 
             if (_hasJumped)
-            {
                 Jump();
-            }
         }
 
         void MovePlayer()
         {
-            Vector3 _finalPos = Vector3.Lerp(transform.position, targetPosition, lerpSpeed * Time.deltaTime);
-            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, jumpForce, rigidbody.linearVelocity.z);
-        }
-
-        void Jump()
-        {
-            if (!isGrounded) return;
-            rigidbody.linearVelocity = new Vector3(rigidbody.linearVelocity.x, jumpForce, rigidbody.linearVelocity.z);
-            isGrounded = false;
-        }
-
-        void ApplyGravity()
-        {
-            if (isGrounded) return;
-
-            verticalVelocity -= gravity * Time.deltaTime;
-            transform.position += Vector3.up * (verticalVelocity * Time.deltaTime);
-
-            if (transform.position.y <= 0f)
-            {
-                transform.position = new Vector3(transform.position.x, 0f, transform.position.z);
-                isGrounded = true;
-                verticalVelocity = 0f;
-            }
-        }
-
-        void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.CompareTag("Ground"))
-            {
-                isGrounded = true;
-            }
+            Vector3 _finalPos = Vector3.Lerp(rigidbody.position, targetPosition, forwardSpeed * Time.fixedDeltaTime);
+            rigidbody.MovePosition(_finalPos);
         }
     }
 }
