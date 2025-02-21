@@ -31,7 +31,7 @@ namespace Shubham.Tyagi
 
         public void ReceiveData(Vector3 _position, bool _hasJumped)
         {
-            targetPosition = new Vector3(_position.x + offsetX, transform.position.y, _position.z);
+            targetPosition = new Vector3(_position.x + (offsetX * 2), transform.position.y, _position.z);
 
             if (_hasJumped)
                 Jump();

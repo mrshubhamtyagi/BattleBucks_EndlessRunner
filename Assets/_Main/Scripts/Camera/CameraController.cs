@@ -8,7 +8,7 @@ namespace Shubham.Tyagi
         [SerializeField] private Transform player;
         [SerializeField] private float speed = 5f;
         [SerializeField] private Vector3 offset = new Vector3(0, 0, -10);
-        [SerializeField] private LayerMask playerLayerMask, remoteLayerMask;
+        [SerializeField] private LayerMask localLayerMask, remoteLayerMask;
 
         public float OffsetZ => offset.z;
 
@@ -19,20 +19,19 @@ namespace Shubham.Tyagi
         private void OnEnable() => GameManager.OnGameStateChanged += OnGameStateChanged;
         private void OnDisable() => GameManager.OnGameStateChanged -= OnGameStateChanged;
 
-        public void SetPlayer(Transform _player, bool _isLocalPlayer, float _playerOffsetX, float _playerOffsetZ)
+        public void SetPlayer(Transform _player, PlayerType _type, float _playerOffsetX, float _playerOffsetZ)
         {
             player = _player;
             Rect _rect = new Rect(0, 0, 1, 1);
             if (GameManager.Instance.gameMode == GameMode.Multiplayer)
             {
-                _rect = _isLocalPlayer ? new Rect(0.5f, 0, 0.5f, 1) : new Rect(0, 0, 0.5f, 1);
-                camera.GetComponent<AudioListener>().enabled = _isLocalPlayer;
-                camera.cullingMask = _isLocalPlayer ? playerLayerMask : remoteLayerMask;
+                _rect = _type == PlayerType.Local ? new Rect(0.5f, 0, 0.5f, 1) : new Rect(0, 0, 0.5f, 1);
+                camera.GetComponent<AudioListener>().enabled = _type == PlayerType.Local;
+                camera.cullingMask = _type == PlayerType.Local ? localLayerMask : remoteLayerMask;
             }
 
             camera.rect = _rect;
             startingPosition = new Vector3(_playerOffsetX, transform.position.y, offset.z + _playerOffsetZ);
-            print(startingPosition);
             transform.position = startingPosition;
         }
 

@@ -53,10 +53,16 @@ namespace Shubham.Tyagi
             if (Vector3.Distance(rigidbody.position, lastSentPosition) < RemotePlayerManager.Instance.minDistanceToSendData) return;
 
             lastSentPosition = rigidbody.position;
-            RemotePlayerManager.Instance.SendData(rigidbody.position, !isGrounded);
+            RemotePlayerManager.Instance.SendPlayerData(rigidbody.position, !isGrounded);
         }
 
 
-        public void AddScore() => UIManager.Instance.UpdateScore(++_score);
+        public void AddScore()
+        {
+            UIManager.Instance.UpdateScore(++_score);
+            
+            if (_score % 5 == 0)
+                GameManager.Instance.IncreaseDifficulty();
+        }
     }
 }

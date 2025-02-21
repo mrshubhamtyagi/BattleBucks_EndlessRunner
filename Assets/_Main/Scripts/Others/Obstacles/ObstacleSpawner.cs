@@ -7,57 +7,46 @@ namespace Shubham.Tyagi
 {
     public class ObstacleSpawner : MonoBehaviour
     {
-        [SerializeField] private GameObject prefab;
-        [SerializeField] private Transform parent;
+        [SerializeField] private ObstacleSimpleBox prefab;
         [SerializeField] private float height = 1f;
-        [SerializeField] private int minCount = 4, maxCount = 6;
-        [SerializeField] private float minDistance = 10, maxDistance = 90;
 
-        private List<GameObject> obstacleList = new List<GameObject>();
-        private List<float> lanePositions;
+        public Dictionary<int, ObstacleSimpleBox> obstacleList { get; private set; } = new Dictionary<int, ObstacleSimpleBox>();
         private Platform platform;
 
         private void Awake() => platform = GetComponentInParent<Platform>();
+        // private void Start() => SpawnObstacles();
 
-        private void Start() => SpawnObstacles();
-
-        public void SpawnObstacles()
+        public void SpawnObstacles(List<Vector3> _positions)
         {
             ResetObstacles();
 
-            int _coinCount = Random.Range(minCount, maxCount + 1);
-            lanePositions = new() { -PlatformManager.Instance.LaneWidth, 0f, PlatformManager.Instance.LaneWidth };
-            foreach (float _zPos in GenerateRandomIncreasingPositions(_coinCount))
+            foreach (Vector3 _pos in _positions)
             {
-                float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];
-                Vector3 _spawnPos = new Vector3(_laneX + platform.offsetX, height, transform.position.z + _zPos);
-                obstacleList.Add(Instantiate(prefab, _spawnPos, Quaternion.identity, parent));
+                Vector3 _spawnPos = new Vector3(_pos.x + platform.offsetX, height, transform.position.z + _pos.z);
+                ObstacleSimpleBox _obstacle = Instantiate(prefab, _spawnPos, Quaternion.identity, platform.ObstacleParent);
+                _obstacle.gameObject.layer = GameManager.Instance.GetLayer(platform.playerType);
+
+                _obstacle.SetId(obstacleList.Count + 1);
+                obstacleList.Add(_obstacle.id, _obstacle);
+                _obstacle.OnCollided += OnCollided;
             }
         }
 
-        private List<float> GenerateRandomIncreasingPositions(int _count)
+        private void OnCollided(int _id)
         {
-            List<float> _positions = new List<float>();
-            float _currentZ = minDistance;
-            float _remainingDistance = maxDistance - minDistance;
-            float _stepMin = _remainingDistance / (_count * 2);
-            float _stepMax = _remainingDistance / _count;
+            var _obstacle = obstacleList[_id];
+            _obstacle.OnCollided -= OnCollided;
 
-            for (int i = 0; i < _count; i++)
-            {
-                _currentZ += Random.Range(_stepMin, _stepMax);
-                if (_currentZ > maxDistance) _currentZ = maxDistance;
-                _positions.Add(_currentZ);
-            }
-
-            return _positions;
+            obstacleList.Remove(_id);
+            Destroy(_obstacle.gameObject);
         }
-
 
         private void ResetObstacles()
         {
-            foreach (var _collectable in obstacleList) Destroy(_collectable);
-            obstacleList = new List<GameObject>();
+            foreach (var _obstacle in obstacleList)
+                Destroy(_obstacle.Value.gameObject);
+
+            obstacleList = new Dictionary<int, ObstacleSimpleBox>();
         }
     }
 }

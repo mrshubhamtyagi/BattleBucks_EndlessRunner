@@ -7,9 +7,12 @@ namespace Shubham.Tyagi
     {
         [field: SerializeField] public GameMode gameMode { get; private set; } = GameMode.Multiplayer;
         [field: SerializeField] public GameState GameState { get; private set; } = GameState.NotStarted;
+        [SerializeField] private int localLayerMask, remoteLayerMask;
 
         public static Action<GameState> OnGameStateChanged;
+        public static Action OnDifficultyIncreased;
         public static GameManager Instance { get; private set; }
+
 
         private void Awake()
         {
@@ -27,11 +30,15 @@ namespace Shubham.Tyagi
             }
         }
 
+        public LayerMask GetLayer(PlayerType _type) => _type == PlayerType.Local ? localLayerMask : remoteLayerMask;
+
         public void SetGameState(GameState _state)
         {
             GameState = _state;
             OnGameStateChanged?.Invoke(GameState);
         }
+
+        public void IncreaseDifficulty() => OnDifficultyIncreased?.Invoke();
     }
 
 
@@ -46,5 +53,11 @@ namespace Shubham.Tyagi
     {
         SinglePlayer,
         Multiplayer,
+    }
+
+    public enum PlayerType
+    {
+        Local,
+        Remote,
     }
 }

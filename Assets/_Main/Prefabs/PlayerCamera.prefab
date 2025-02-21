@@ -48,7 +48,7 @@ MonoBehaviour:
   player: {fileID: 0}
   speed: 10
   offset: {x: 0, y: 0, z: -12}
-  playerLayerMask:
+  localLayerMask:
     serializedVersion: 2
     m_Bits: 119
   remoteLayerMask:

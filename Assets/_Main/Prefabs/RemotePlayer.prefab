@@ -53,7 +53,7 @@ MonoBehaviour:
   gravity: 6
   currentLane: 0
   isGrounded: 0
-  startingPosition: {x: 0, y: 3, z: -5}
+  startingPosition: {x: -10, y: 3, z: -5}
   offsetX: -10
   targetPosition: {x: 0, y: 0, z: 0}
 --- !u!136 &8968295996782085615

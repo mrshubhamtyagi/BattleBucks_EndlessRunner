@@ -1,28 +1,38 @@
+using System;
 using UnityEngine;
 
 namespace Shubham.Tyagi
 {
     public class CollectableCoin : MonoBehaviour
     {
+        [field: SerializeField] public int id { get; private set; }
+
+        public Action<int> OnCollected;
+
+        public void SetId(int _id)
+        {
+            id = _id;
+            gameObject.name = $"CollectableCoin_{_id}";
+        }
+
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
+            if (other.TryGetComponent(out PlayerController _playerController))
             {
-                Debug.Log("Coin Collected!");
-                if (other.TryGetComponent(out PlayerController _playerController))
-                {
-                    _playerController.AddScore();
-                }
+                // Debug.Log("Coin Collected!");
 
-                Destroy(gameObject);
+                _playerController.AddScore();
+                RemotePlayerManager.Instance.SendCollectedCoinData(id);
+                Collect();
                 // Invoke(nameof(CollectCoin), 0.5f);
             }
         }
 
-        private void CollectCoin()
+        public void Collect()
         {
             // GetComponentInParent<Platform>().SpawnCoin();
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            OnCollected?.Invoke(id);
         }
     }
 }

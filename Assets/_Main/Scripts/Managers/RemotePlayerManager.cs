@@ -21,7 +21,7 @@ namespace Shubham.Tyagi
         public void SetRemotePlayer(RemotePlayerController _player) => remotePlayer = _player;
 
 
-        public void SendData(Vector3 position, bool jumped)
+        public void SendPlayerData(Vector3 position, bool jumped)
         {
             if (remotePlayer == null) return;
             if (Vector3.Distance(position, lastSentPosition) < minDistanceToSendData && jumped == lastJumpState) return;
@@ -29,6 +29,21 @@ namespace Shubham.Tyagi
             lastSentPosition = position;
             lastJumpState = jumped;
             remotePlayer.ReceiveData(position, jumped);
+        }
+
+        public void SendCollectedCoinData(int _id)
+        {
+            var _coin = PlatformManager.Instance.CurrentPlatformRemote.GetCollectedById(_id);
+            if (_coin == null) return;
+            _coin.Collect();
+        }
+
+        public void SendObstacleData(int _id)
+        {
+            var _obstacle = PlatformManager.Instance.CurrentPlatformRemote.GetObstacleById(_id);
+            if (_obstacle == null) return;
+            print($"Remote Player Collided with {_obstacle.gameObject.name}");
+            _obstacle.CollidedWithObstacle();
         }
     }
 }

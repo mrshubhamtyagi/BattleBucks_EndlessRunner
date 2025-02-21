@@ -1073,6 +1073,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813319768}
   m_CullTransparentMesh: 1
+--- !u!1 &827963549
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 827963551}
+  - component: {fileID: 827963550}
+  m_Layer: 0
+  m_Name: PlatformManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &827963550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827963549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e82297eecfc435b952bc4edb358695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  platformPrefab: {fileID: 4290708406407593629, guid: 23588ffdd38c94182bf3077b92c6a7c8, type: 3}
+  parent: {fileID: 1042750725}
+  offsetX: 10
+  <LaneWidth>k__BackingField: 3
+  platformListLocal: []
+  platformListRemote: []
+--- !u!4 &827963551
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827963549}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,8 +1213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1120722993}
   - component: {fileID: 1120722992}
-  - component: {fileID: 1120722995}
-  - component: {fileID: 1120722994}
+  - component: {fileID: 1120722997}
   - component: {fileID: 1120722996}
   m_Layer: 0
   m_Name: GameManager
@@ -1185,8 +1234,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 341fc850b05704f9c95036316d9e48ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <gameMode>k__BackingField: 0
+  <gameMode>k__BackingField: 1
   <GameState>k__BackingField: 0
+  localLayerMask: 6
+  remoteLayerMask: 7
 --- !u!4 &1120722993
 Transform:
   m_ObjectHideFlags: 0
@@ -1202,37 +1253,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1120722994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1120722991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15843e77ce929480cababd88545be992, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localPlayerPrefab: {fileID: 1778436305298863151, guid: 98fa0103502574a0482e9846a72a0b7b, type: 3}
-  remotePlayerPrefab: {fileID: 573812845242872603, guid: a9b3048f6a84f4bc296dadb64d211e09, type: 3}
-  cameraPrefab: {fileID: 6160103399660542281, guid: ef18c2729e8f6439f8218bd84f73b3c5, type: 3}
---- !u!114 &1120722995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1120722991}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88e82297eecfc435b952bc4edb358695, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  platformPrefab: {fileID: 4290708406407593629, guid: 23588ffdd38c94182bf3077b92c6a7c8, type: 3}
-  parent: {fileID: 1042750725}
-  offset: {x: 10, y: 0, z: 0}
-  <LaneWidth>k__BackingField: 3
 --- !u!114 &1120722996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1247,6 +1267,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   remotePlayer: {fileID: 0}
   minDistanceToSendData: 0.1
+--- !u!114 &1120722997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1120722991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15843e77ce929480cababd88545be992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPlayerPrefab: {fileID: 1778436305298863151, guid: 98fa0103502574a0482e9846a72a0b7b, type: 3}
+  remotePlayerPrefab: {fileID: 573812845242872603, guid: a9b3048f6a84f4bc296dadb64d211e09, type: 3}
+  cameraPrefab: {fileID: 6160103399660542281, guid: ef18c2729e8f6439f8218bd84f73b3c5, type: 3}
 --- !u!1 &1166189375
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,6 +2140,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1120722993}
   - {fileID: 151364190}
+  - {fileID: 827963551}
   - {fileID: 241039346}
   - {fileID: 410087041}
   - {fileID: 832575519}

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,16 +10,18 @@ namespace Shubham.Tyagi
         [SerializeField] float offsetX;
         [field: SerializeField] public int LaneWidth { get; private set; } = 3;
 
-        private int currentPlatformIndex = 0;
-        private int platformCount => 2;
+        private int initialPlatformCount => 2;
         private int platformLength => 100;
-        private List<Platform> platformListForLocal, platformListForRemote;
+        [SerializeField] private List<Platform> platformListLocal, platformListRemote;
 
+        private int currentPlatformIndex = 0;
+        private List<float> lanePositions;
+        private CameraController cameraController;
 
         public float CameraZOffset => cameraController.OffsetZ - 2;
-        public Platform CurrentPlatform => platformListForLocal[currentPlatformIndex];
+        public Platform CurrentPlatformLocal => platformListLocal[currentPlatformIndex];
+        public Platform CurrentPlatformRemote => platformListRemote[currentPlatformIndex];
 
-        private CameraController cameraController;
         public static PlatformManager Instance { get; private set; }
 
         private void Awake()
@@ -29,7 +30,7 @@ namespace Shubham.Tyagi
             Instance = this;
         }
 
-        // private void Start() => SpawnInitialPlatforms();
+        private void Start() => lanePositions = new() { -PlatformManager.Instance.LaneWidth, 0f, PlatformManager.Instance.LaneWidth };
 
         private void OnEnable() => GameManager.OnGameStateChanged += OnGameStateChanged;
         private void OnDisable() => GameManager.OnGameStateChanged -= OnGameStateChanged;
@@ -38,9 +39,8 @@ namespace Shubham.Tyagi
         {
             if (_state == GameState.Ended)
             {
-                foreach (Platform _platform in platformListForLocal)
-                    Destroy(_platform.gameObject);
-
+                DestroyPlatformsLocal();
+                DestroyPlatformsRemote();
                 SpawnInitialPlatforms();
             }
         }
@@ -50,34 +50,139 @@ namespace Shubham.Tyagi
             if (cameraController == null)
                 cameraController = FindFirstObjectByType<CameraController>();
 
-            platformListForLocal = new List<Platform>();
-            platformListForRemote = new List<Platform>();
-            for (int i = 0; i < platformCount; i++)
+            platformListLocal = new List<Platform>();
+            platformListRemote = new List<Platform>();
+            for (int i = 0; i < initialPlatformCount; i++)
             {
-                Vector3 _pos = Vector3.forward * i * platformLength;
-                _pos.z += CameraZOffset;
-
-                _pos.x += offsetX;
-                platformListForLocal.Add(Instantiate(platformPrefab, _pos, Quaternion.identity, parent));
+                Platform _local = SpawnPlatformLocal(i);
+                var _collectablesPositions = GenerateRandomLanePositions(5, platformLength);
+                var _obstaclesPositions = GenerateRandomLanePositions(10, platformLength);
+                _local.SpawnCollectables(_collectablesPositions);
+                _local.SpawnObstacles(_obstaclesPositions);
 
                 if (GameManager.Instance.gameMode == GameMode.Multiplayer)
                 {
-                    _pos.x -= offsetX;
-                    platformListForRemote.Add(Instantiate(platformPrefab, _pos, Quaternion.identity, parent));
+                    Platform _remote = SpawnPlatformRemote(i);
+                    _remote.SpawnCollectables(_collectablesPositions);
+                    _remote.SpawnObstacles(_obstaclesPositions);
                 }
             }
         }
 
-
-        [ContextMenu("RespawnPlatform")]
         public void RespawnLastPlatform()
         {
-            Platform _platform = CurrentPlatform;
+            var _collectablesPositions = GenerateRandomLanePositions(0, platformLength);
+            var _obstaclesPositions = GenerateRandomLanePositions(0, platformLength);
+            RespawnLastPlatformLocal(CurrentPlatformLocal, _collectablesPositions, _obstaclesPositions);
+
+            if (GameManager.Instance.gameMode == GameMode.Multiplayer)
+                RespawnLastPlatformRemote(CurrentPlatformRemote, _collectablesPositions, _obstaclesPositions);
+
+            currentPlatformIndex = (currentPlatformIndex + 1) % initialPlatformCount;
+        }
+
+
+        #region ------------------------------------------------------- LOCAL
+
+        private void DestroyPlatformsLocal()
+        {
+            foreach (Platform _platform in platformListLocal)
+                Destroy(_platform.gameObject);
+        }
+
+        private Platform SpawnPlatformLocal(int _i)
+        {
+            Vector3 _pos = Vector3.forward * _i * platformLength;
+            _pos.z += CameraZOffset;
+            _pos.x += offsetX;
+
+            Platform _platform = Instantiate(platformPrefab, _pos, Quaternion.identity, parent);
+            _platform.Init(PlayerType.Local, offsetX);
+            platformListLocal.Add(_platform);
+
+            _platform.name = $"Platform_{PlayerType.Local} {_i}";
+            print($"SpawnLocalPlatform - {_platform.name}");
+            return _platform;
+        }
+
+        private void RespawnLastPlatformLocal(Platform _platform, List<Vector3> _collectablesPositions, List<Vector3> _obstaclesPositions)
+        {
+            Debug.Log($"RespawnLastPlatformLocal {_platform}");
             _platform.gameObject.SetActive(false);
-            _platform.transform.position = Vector3.forward * (platformLength + CameraZOffset);
-            _platform.transform.position.x 
+            _platform.transform.position = new Vector3(_platform.offsetX, 0, platformLength + CameraZOffset);
+            _platform.SpawnCollectables(_collectablesPositions);
+            _platform.SpawnObstacles(_obstaclesPositions);
             _platform.gameObject.SetActive(true);
-            currentPlatformIndex = ++currentPlatformIndex % platformCount;
+        }
+
+        #endregion
+
+
+        #region ------------------------------------------------------- REMOTE
+
+        private void DestroyPlatformsRemote()
+        {
+            foreach (Platform _platform in platformListRemote)
+                Destroy(_platform.gameObject);
+        }
+
+        private Platform SpawnPlatformRemote(int _i)
+        {
+            Vector3 _pos = Vector3.forward * _i * platformLength;
+            _pos.z += CameraZOffset;
+            _pos.x += -offsetX;
+
+            Platform _platform = Instantiate(platformPrefab, _pos, Quaternion.identity, parent);
+            _platform.Init(PlayerType.Remote, -offsetX);
+            platformListRemote.Add(_platform);
+
+            _platform.name = $"Platform_{PlayerType.Remote} {_i}";
+            print($"SpawnRemotePlatform - {_platform.name}");
+            return _platform;
+        }
+
+        private void RespawnLastPlatformRemote(Platform _platform, List<Vector3> _collectablesPositions, List<Vector3> _obstaclesPositions)
+        {
+            _platform.gameObject.SetActive(false);
+            _platform.transform.position = new Vector3(_platform.offsetX, 0, platformLength + CameraZOffset);
+            _platform.SpawnCollectables(_collectablesPositions);
+            _platform.SpawnObstacles(_obstaclesPositions);
+            _platform.gameObject.SetActive(true);
+        }
+
+        #endregion
+
+
+        private List<Vector3> GenerateRandomLanePositions(float _minDistance, float _maxDistance)
+        {
+            List<Vector3> _positions = new();
+            foreach (float _zPos in GenerateRandomIncreasingZPositions(_minDistance, _maxDistance))
+            {
+                float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];
+                Vector3 _spawnPos = new Vector3(_laneX, 0, transform.position.z + _zPos);
+                _positions.Add(_spawnPos);
+            }
+
+            return _positions;
+        }
+
+        private List<float> GenerateRandomIncreasingZPositions(float _minDistance, float _maxDistance)
+        {
+            int _count = Random.Range(5, 8);
+            List<float> _positions = new List<float>();
+            float _currentZ = _minDistance;
+            float _remainingDistance = _maxDistance - _minDistance;
+            float _stepMin = _remainingDistance / (_count * 2);
+            float _stepMax = _remainingDistance / _count;
+
+            for (int i = 0; i < _count; i++)
+            {
+                _currentZ += Random.Range(_stepMin, _stepMax);
+                if (_currentZ > _maxDistance) _currentZ = _maxDistance;
+                _positions.Add(_currentZ);
+            }
+
+            return _positions;
         }
     }
 }

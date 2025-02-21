@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -6,64 +7,55 @@ namespace Shubham.Tyagi
 {
     public class CollectableSpawner : MonoBehaviour
     {
-        [SerializeField] private GameObject prefab;
-        [SerializeField] private Transform parent;
-        [SerializeField] private float height = 1f;
-        [SerializeField] private int minCount = 5, maxCount = 10;
-        [SerializeField] private float minDistance = 10, maxDistance = 90;
+        [SerializeField] private CollectableCoin prefab;
+        [SerializeField] private float height = 3f;
 
-        private List<GameObject> collectableList = new List<GameObject>();
-        private List<float> lanePositions;
+        public Dictionary<int, CollectableCoin> collectableList { get; private set; } = new Dictionary<int, CollectableCoin>();
         private Platform platform;
 
         private void Awake() => platform = GetComponentInParent<Platform>();
-        private void Start() => SpawnCollectables();
 
-        public void SpawnCollectables()
+        public void SpawnCollectables(List<Vector3> _positions)
         {
             ResetCollectables();
-            lanePositions = new() { -PlatformManager.Instance.LaneWidth, 0f, PlatformManager.Instance.LaneWidth };
+            // int _coinCount = Random.Range(minCount, maxCount + 1);
 
-            int _coinCount = Random.Range(minCount, maxCount + 1);
             // for (int i = 0; i < _coinCount; i++)
             // {
             //     float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];
-            //     float _zOffset = Random.Range(30f, 90f);
+            //     float _zOffset = Random.Range(10f, 100f);
             //     Vector3 _spawnPos = new Vector3(_laneX, height, transform.position.z + _zOffset);
             //     collectableList.Add(Instantiate(prefab, _spawnPos, Quaternion.identity, parent));
             // }
 
-            foreach (float _zPos in GenerateRandomIncreasingPositions(_coinCount))
+            foreach (Vector3 _pos in _positions)
             {
-                float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];
-                Vector3 _spawnPos = new Vector3(_laneX + platform.offsetX, height, transform.position.z + _zPos);
-                collectableList.Add(Instantiate(prefab, _spawnPos, Quaternion.identity, parent));
+                Vector3 _spawnPos = new Vector3(_pos.x + platform.offsetX, height, transform.position.z + _pos.z);
+                CollectableCoin _collectable = Instantiate(prefab, _spawnPos, Quaternion.identity, platform.CollectableParent);
+                _collectable.gameObject.layer = GameManager.Instance.GetLayer(platform.playerType);
+
+                _collectable.SetId(collectableList.Count + 1);
+                collectableList.Add(_collectable.id, _collectable);
+                _collectable.OnCollected += OnCollected;
             }
         }
 
-        private List<float> GenerateRandomIncreasingPositions(int _count)
+        private void OnCollected(int _id)
         {
-            List<float> _positions = new List<float>();
-            float _currentZ = minDistance;
-            float _remainingDistance = maxDistance - minDistance;
-            float _stepMin = _remainingDistance / (_count * 2);
-            float _stepMax = _remainingDistance / _count;
+            var _collectable = collectableList[_id];
+            _collectable.OnCollected -= OnCollected;
 
-            for (int i = 0; i < _count; i++)
-            {
-                _currentZ += Random.Range(_stepMin, _stepMax);
-                if (_currentZ > maxDistance) _currentZ = maxDistance;
-                _positions.Add(_currentZ);
-            }
-
-            return _positions;
+            collectableList.Remove(_id);
+            Destroy(_collectable.gameObject);
         }
 
 
         private void ResetCollectables()
         {
-            foreach (var _collectable in collectableList) Destroy(_collectable);
-            collectableList = new List<GameObject>();
+            foreach (var _collectable in collectableList)
+                Destroy(_collectable.Value.gameObject);
+
+            collectableList = new Dictionary<int, CollectableCoin>();
         }
     }
 }
