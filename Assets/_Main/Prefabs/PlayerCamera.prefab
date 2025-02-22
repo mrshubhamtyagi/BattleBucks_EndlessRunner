@@ -50,10 +50,10 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: -12}
   localLayerMask:
     serializedVersion: 2
-    m_Bits: 119
+    m_Bits: 87
   remoteLayerMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 151
 --- !u!1 &6914366995760085430
 GameObject:
   m_ObjectHideFlags: 0
@@ -127,7 +127,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 119
+    m_Bits: 23
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

@@ -1,0 +1,10 @@
+# ninja log v5
+1	572	1740212262910868252	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	ec78615ca207603f
+2	619	1740212262959124405	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	9728cb73224fcc03
+0	662	1740212263004004331	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	8902f6b1886ec3b6
+3	671	1740212263012978674	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	579e82a645735012
+3	696	1740212263036040557	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	d4a8ecadb57dd4bc
+1	766	1740212263108018388	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	4583b095e8f85d99
+2	824	1740212263166208432	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	dd92b2ba235359b3
+0	954	1740212263296238514	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	768a07e1c898188c
+954	1073	1740212263410579673	/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/72o2i5v2/obj/arm64-v8a/libgame.so	12f13d2ba0c042bd

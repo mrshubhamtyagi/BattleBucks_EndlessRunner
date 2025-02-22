@@ -16,6 +16,14 @@ namespace Shubham.Tyagi
             Instance = this;
         }
 
+        private void Start()
+        {
+            SpawnLocalPlayer();
+            PlatformManager.Instance.SpawnInitialPlatforms();
+            if (GameManager.Instance.gameMode == GameMode.Multiplayer)
+                PlayerSpawner.Instance.SpawnRemotePlayer();
+        }
+
         public void SpawnLocalPlayer()
         {
             PlayerController _local = Instantiate(localPlayerPrefab, null) as PlayerController;

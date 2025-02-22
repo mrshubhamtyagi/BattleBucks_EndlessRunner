@@ -21,14 +21,17 @@ namespace Shubham.Tyagi
         public void SetRemotePlayer(RemotePlayerController _player) => remotePlayer = _player;
 
 
-        public void SendPlayerData(Vector3 position, bool jumped)
+        public void SendPlayerData(short[] _position, bool _hasJumped)
         {
             if (remotePlayer == null) return;
             // if (Vector3.Distance(position, lastSentPosition) < minDistanceToSendData && jumped == lastJumpState) return;
 
             // lastSentPosition = position;
             // lastJumpState = jumped;
-            remotePlayer.ReceiveData(position.QuantizePosition(), jumped);
+
+            int _dataSize = (sizeof(short) * 3) + sizeof(bool);
+            Log($"COMPRESSED Recieved - Position: {_position.ReveseQuantizePosition()} | Jump: {_hasJumped} | Data Size: {_dataSize} bytes");
+            remotePlayer.ReceiveData(_position.ReveseQuantizePosition(), _hasJumped);
         }
 
         public void SendCollectedCoinData(int _id)
@@ -36,6 +39,7 @@ namespace Shubham.Tyagi
             var _coin = PlatformManager.Instance.CurrentPlatformRemote.GetCollectedById(_id);
             if (_coin == null) return;
 
+            UIManager.Instance.ShowLogRemote("Coin Collected!");
             print($"Remote Player Collected Coin {_coin.gameObject.name}");
             _coin.Collect();
         }
@@ -44,8 +48,16 @@ namespace Shubham.Tyagi
         {
             var _obstacle = PlatformManager.Instance.CurrentPlatformRemote.GetObstacleById(_id);
             if (_obstacle == null) return;
+
+            UIManager.Instance.ShowLogRemote("Collided with Obstacle!");
             print($"Remote Player Collided with {_obstacle.gameObject.name}");
             _obstacle.CollidedWithObstacle();
+        }
+
+        private void Log(string _log)
+        {
+            if (GameManager.EnableLogInBuild || Application.isEditor)
+                print(_log);
         }
     }
 }

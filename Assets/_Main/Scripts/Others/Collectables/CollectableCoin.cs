@@ -19,10 +19,11 @@ namespace Shubham.Tyagi
         {
             if (other.TryGetComponent(out PlayerController _playerController))
             {
-                // Debug.Log("Coin Collected!");
+                UIManager.Instance.ShowLogLocal("Coin Collected!");
 
                 _playerController.AddScore();
-                RemotePlayerManager.Instance.SendCollectedCoinData(id);
+                if (GameManager.Instance.gameMode == GameMode.Multiplayer)
+                    RemotePlayerManager.Instance.SendCollectedCoinData(id);
                 Collect();
                 // Invoke(nameof(CollectCoin), 0.5f);
             }

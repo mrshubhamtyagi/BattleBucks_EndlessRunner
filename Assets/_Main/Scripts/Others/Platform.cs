@@ -32,22 +32,19 @@ namespace Shubham.Tyagi
             obstacleSpawner = GetComponentInChildren<ObstacleSpawner>();
         }
 
-        private void Start()
-        {
-            intialSpeed = speed;
-        }
+        private void Start() => intialSpeed = speed;
 
 
         private void OnEnable()
         {
             GameManager.OnGameStateChanged += OnGameStateChanged;
-            GameManager.OnDifficultyIncreased += OnIncreaseDifficulty;
+            GameManager.OnDifficultyIncreased += OnDifficultyIncreased;
         }
 
         private void OnDisable()
         {
             GameManager.OnGameStateChanged -= OnGameStateChanged;
-            GameManager.OnDifficultyIncreased -= OnIncreaseDifficulty;
+            GameManager.OnDifficultyIncreased -= OnDifficultyIncreased;
         }
 
         private void OnGameStateChanged(GameState _state)
@@ -56,7 +53,7 @@ namespace Shubham.Tyagi
                 speed = intialSpeed;
         }
 
-        private void OnIncreaseDifficulty() => speed += speed * .2f;
+        private void OnDifficultyIncreased() => speed += speed * GameManager.DifficultyFactor;
 
         public void Init(PlayerType _type, float _offsetX)
         {

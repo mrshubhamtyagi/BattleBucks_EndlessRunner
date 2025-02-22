@@ -1,0 +1,17 @@
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/GAToUnityCallbacks.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/MacroEnd.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/MacroHeaderBegin.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/MacroSourceBegin.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGAApplication.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGAConfiguration.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGADebug.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGAEvents.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGAInput.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGASoftKeyboard.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGASoftKeyboardCallbacks.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGATypes.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UGAVersion.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UnityToGACallbacks.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UnityToGAConfigurationCallbacks.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UnityToGAKeyEventCallbacks.h
+/Users/shubhamtyagi/UnityWorspace/BattleBucks_EndlessRunner/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/UnityToGAMotionEventCallbacks.h

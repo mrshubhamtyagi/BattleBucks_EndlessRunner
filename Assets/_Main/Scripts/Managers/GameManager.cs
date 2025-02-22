@@ -8,7 +8,11 @@ namespace Shubham.Tyagi
         [field: SerializeField] public GameMode gameMode { get; private set; } = GameMode.Multiplayer;
         [field: SerializeField] public GameState GameState { get; private set; } = GameState.NotStarted;
         [SerializeField] private int localLayerMask, remoteLayerMask;
+        [SerializeField] private Light directionalLight;
 
+
+        public static float DifficultyFactor => 0.2f;
+        public static bool EnableLogInBuild => false;
         public static Action<GameState> OnGameStateChanged;
         public static Action OnDifficultyIncreased;
         public static GameManager Instance { get; private set; }
@@ -18,16 +22,8 @@ namespace Shubham.Tyagi
         {
             if (Instance != null) return;
             Instance = this;
-        }
 
-        private void Start()
-        {
-            PlayerSpawner.Instance.SpawnLocalPlayer();
-            PlatformManager.Instance.SpawnInitialPlatforms();
-            if (gameMode == GameMode.Multiplayer)
-            {
-                PlayerSpawner.Instance.SpawnRemotePlayer();
-            }
+            Application.targetFrameRate = 90;
         }
 
         public LayerMask GetLayer(PlayerType _type) => _type == PlayerType.Local ? localLayerMask : remoteLayerMask;
@@ -36,9 +32,32 @@ namespace Shubham.Tyagi
         {
             GameState = _state;
             OnGameStateChanged?.Invoke(GameState);
+
+            if (_state == GameState.Running)
+                InvokeRepeating(nameof(CheckForQualityAdjustment), 5, 5);
+            else
+                CancelInvoke(nameof(CheckForQualityAdjustment));
+        }
+
+        private void CheckForQualityAdjustment()
+        {
+            Log($"CheckForQualityAdjustment - {Application.targetFrameRate}");
+
+            if (Application.targetFrameRate < 60)
+                directionalLight.shadows = LightShadows.None;
+            else if (Application.targetFrameRate < 75)
+                directionalLight.shadows = LightShadows.Hard;
+            else
+                directionalLight.shadows = LightShadows.Soft;
         }
 
         public void IncreaseDifficulty() => OnDifficultyIncreased?.Invoke();
+
+        private void Log(string _log)
+        {
+            if (GameManager.EnableLogInBuild || Application.isEditor)
+                print(_log);
+        }
     }
 
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,10 +8,15 @@ namespace Shubham.Tyagi
     {
         private PlayerController playerController;
 
-        void Start()
+        public static PlayerInputController Instance { get; private set; }
+
+        private void Awake()
         {
-            playerController = GetComponent<PlayerController>();
+            if (Instance != null) return;
+            Instance = this;
         }
+
+        void Start() => playerController = GetComponent<PlayerController>();
 
         void Update()
         {
@@ -21,15 +27,19 @@ namespace Shubham.Tyagi
         void HandleInputs()
         {
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
-                playerController.Jump();
+                Jump();
             else
             {
                 if (Keyboard.current.leftArrowKey.wasPressedThisFrame || Keyboard.current.aKey.wasPressedThisFrame)
-                    playerController.MoveLeft();
-                else if (Keyboard.current.rightArrowKey.wasPressedThisFrame ||
-                         Keyboard.current.dKey.wasPressedThisFrame)
-                    playerController.MoveRight();
+                    MoveLeft();
+                else if (Keyboard.current.rightArrowKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame)
+                    MoveRight();
             }
         }
+
+
+        public void MoveLeft() => playerController.MoveLeft();
+        public void MoveRight() => playerController.MoveRight();
+        public void Jump() => playerController.Jump();
     }
 }

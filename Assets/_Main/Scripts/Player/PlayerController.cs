@@ -51,9 +51,11 @@ namespace Shubham.Tyagi
         private void SendDataToRemotePlayer()
         {
             if (GameManager.Instance.gameMode == GameMode.SinglePlayer) return;
+            if (!ValidateChangeInData()) return;
 
-            if (ValidateChangeInData())
-                RemotePlayerManager.Instance.SendPlayerData(lastSentPosition, lastSentJump);
+            int _dataSize = (sizeof(float) * 3) + sizeof(bool);
+            Log($"UN_COMPRESSED Before Sent-  Position: {rigidbody.position} | Jump: {lastSentJump} | Data Size: {_dataSize} bytes");
+            RemotePlayerManager.Instance.SendPlayerData(lastSentPosition.QuantizePositionToShort(), lastSentJump);
         }
 
         private bool ValidateChangeInData()
@@ -66,7 +68,7 @@ namespace Shubham.Tyagi
             if (!_validChangeInPosition && !_validChangeInJump)
                 return false;
 
-            lastSentPosition = rigidbody.position.QuantizePosition();
+            lastSentPosition = rigidbody.position;
             lastSentJump = _hasJumpedThisFrame;
             return true;
         }
@@ -77,6 +79,12 @@ namespace Shubham.Tyagi
 
             if (_score % 5 == 0)
                 GameManager.Instance.IncreaseDifficulty();
+        }
+
+        private void Log(string _log)
+        {
+            if (GameManager.EnableLogInBuild || Application.isEditor)
+                print(_log);
         }
     }
 }

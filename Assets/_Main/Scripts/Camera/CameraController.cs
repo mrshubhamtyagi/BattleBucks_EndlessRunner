@@ -23,11 +23,11 @@ namespace Shubham.Tyagi
         {
             player = _player;
             Rect _rect = new Rect(0, 0, 1, 1);
+            camera.cullingMask = _type == PlayerType.Local ? localLayerMask : remoteLayerMask;
             if (GameManager.Instance.gameMode == GameMode.Multiplayer)
             {
                 _rect = _type == PlayerType.Local ? new Rect(0.5f, 0, 0.5f, 1) : new Rect(0, 0, 0.5f, 1);
                 camera.GetComponent<AudioListener>().enabled = _type == PlayerType.Local;
-                camera.cullingMask = _type == PlayerType.Local ? localLayerMask : remoteLayerMask;
             }
 
             camera.rect = _rect;

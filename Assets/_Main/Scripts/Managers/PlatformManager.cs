@@ -18,7 +18,7 @@ namespace Shubham.Tyagi
         private List<float> lanePositions;
         private CameraController cameraController;
 
-        public float CameraZOffset => cameraController.OffsetZ - 2;
+        public float CameraZOffset => cameraController.OffsetZ - 5;
         public Platform CurrentPlatformLocal => platformListLocal[currentPlatformIndex];
         public Platform CurrentPlatformRemote => platformListRemote[currentPlatformIndex];
 
@@ -101,18 +101,18 @@ namespace Shubham.Tyagi
             platformListLocal.Add(_platform);
 
             _platform.name = $"Platform_{PlayerType.Local} {_i}";
-            print($"SpawnLocalPlatform - {_platform.name}");
+            print($"Platform Spawned LOCAL {_platform.name}");
             return _platform;
         }
 
         private void RespawnLastPlatformLocal(Platform _platform, List<Vector3> _collectablesPositions, List<Vector3> _obstaclesPositions)
         {
-            print($"RespawnLastPlatformLocal {_platform}");
             _platform.gameObject.SetActive(false);
             _platform.transform.position = new Vector3(_platform.offsetX, 0, platformLength + CameraZOffset);
             _platform.SpawnCollectables(_collectablesPositions);
             _platform.SpawnObstacles(_obstaclesPositions);
             _platform.gameObject.SetActive(true);
+            print($"Platform Respawned LOCAL {_platform.name}");
         }
 
         #endregion
@@ -137,7 +137,7 @@ namespace Shubham.Tyagi
             platformListRemote.Add(_platform);
 
             _platform.name = $"Platform_{PlayerType.Remote} {_i}";
-            print($"SpawnRemotePlatform - {_platform.name}");
+            print($"Platform Spawned REMOTE {_platform.name}");
             return _platform;
         }
 
@@ -148,6 +148,7 @@ namespace Shubham.Tyagi
             _platform.SpawnCollectables(_collectablesPositions);
             _platform.SpawnObstacles(_obstaclesPositions);
             _platform.gameObject.SetActive(true);
+            print($"Platform Respawned REMOTE {_platform.name}");
         }
 
         #endregion
@@ -155,7 +156,7 @@ namespace Shubham.Tyagi
 
         private List<Vector3> GenerateRandomLanePositions(float _minDistance, float _maxDistance)
         {
-            List<Vector3> _positions = new();
+            List<Vector3> _positions = new List<Vector3>();
             foreach (float _zPos in GenerateRandomIncreasingZPositions(_minDistance, _maxDistance))
             {
                 float _laneX = lanePositions[Random.Range(0, lanePositions.Count)];

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Shubham.Tyagi
 {
@@ -32,9 +31,7 @@ namespace Shubham.Tyagi
         public void ReceiveData(Vector3 _position, bool _hasJumped)
         {
             targetPosition = new Vector3(_position.x + (offsetX * 2), transform.position.y, _position.z);
-
-            if (_hasJumped)
-                Jump();
+            if (_hasJumped) Jump();
         }
 
         void MovePlayer()
