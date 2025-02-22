@@ -19,7 +19,7 @@ namespace Shubham.Tyagi
         {
             if (other.gameObject.TryGetComponent(out PlayerController _playerController))
             {
-                Debug.Log($"Collided with Obstacle {gameObject.name}");
+                print($"Collided with Obstacle {gameObject.name}");
                 RemotePlayerManager.Instance.SendObstacleData(id);
                 GameManager.Instance.SetGameState(GameState.Ended);
             }

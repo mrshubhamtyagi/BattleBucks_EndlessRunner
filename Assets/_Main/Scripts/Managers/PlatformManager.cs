@@ -107,7 +107,7 @@ namespace Shubham.Tyagi
 
         private void RespawnLastPlatformLocal(Platform _platform, List<Vector3> _collectablesPositions, List<Vector3> _obstaclesPositions)
         {
-            Debug.Log($"RespawnLastPlatformLocal {_platform}");
+            print($"RespawnLastPlatformLocal {_platform}");
             _platform.gameObject.SetActive(false);
             _platform.transform.position = new Vector3(_platform.offsetX, 0, platformLength + CameraZOffset);
             _platform.SpawnCollectables(_collectablesPositions);

@@ -5,8 +5,9 @@ namespace Shubham.Tyagi
     public class PlayerController : Player
     {
         public float offsetX;
-        private Vector3 lastSentPosition;
         private int _score;
+        private Vector3 lastSentPosition;
+        private bool lastSentJump;
 
         protected override void OnGameStateChanged(GameState _state)
         {
@@ -50,17 +51,30 @@ namespace Shubham.Tyagi
         private void SendDataToRemotePlayer()
         {
             if (GameManager.Instance.gameMode == GameMode.SinglePlayer) return;
-            if (Vector3.Distance(rigidbody.position, lastSentPosition) < RemotePlayerManager.Instance.minDistanceToSendData) return;
 
-            lastSentPosition = rigidbody.position;
-            RemotePlayerManager.Instance.SendPlayerData(rigidbody.position, !isGrounded);
+            if (ValidateChangeInData())
+                RemotePlayerManager.Instance.SendPlayerData(lastSentPosition, lastSentJump);
         }
 
+        private bool ValidateChangeInData()
+        {
+            bool _validChangeInPosition = Vector3.Distance(rigidbody.position, lastSentPosition) > RemotePlayerManager.Instance.minDistanceToSendData;
+
+            bool _hasJumpedThisFrame = !isGrounded;
+            bool _validChangeInJump = lastSentJump != _hasJumpedThisFrame;
+
+            if (!_validChangeInPosition && !_validChangeInJump)
+                return false;
+
+            lastSentPosition = rigidbody.position.QuantizePosition();
+            lastSentJump = _hasJumpedThisFrame;
+            return true;
+        }
 
         public void AddScore()
         {
             UIManager.Instance.UpdateScore(++_score);
-            
+
             if (_score % 5 == 0)
                 GameManager.Instance.IncreaseDifficulty();
         }

@@ -1266,7 +1266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   remotePlayer: {fileID: 0}
-  minDistanceToSendData: 0.1
+  minDistanceToSendData: 0.25
 --- !u!114 &1120722997
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,17 +24,19 @@ namespace Shubham.Tyagi
         public void SendPlayerData(Vector3 position, bool jumped)
         {
             if (remotePlayer == null) return;
-            if (Vector3.Distance(position, lastSentPosition) < minDistanceToSendData && jumped == lastJumpState) return;
+            // if (Vector3.Distance(position, lastSentPosition) < minDistanceToSendData && jumped == lastJumpState) return;
 
-            lastSentPosition = position;
-            lastJumpState = jumped;
-            remotePlayer.ReceiveData(position, jumped);
+            // lastSentPosition = position;
+            // lastJumpState = jumped;
+            remotePlayer.ReceiveData(position.QuantizePosition(), jumped);
         }
 
         public void SendCollectedCoinData(int _id)
         {
             var _coin = PlatformManager.Instance.CurrentPlatformRemote.GetCollectedById(_id);
             if (_coin == null) return;
+
+            print($"Remote Player Collected Coin {_coin.gameObject.name}");
             _coin.Collect();
         }
 
